@@ -14,6 +14,7 @@ public class solution{
         b.reverse();
         String c = b.toString();
         if(A.equals(c)){
+            
             System.out.println("Yes");
         }else{
             System.out.println("No");
