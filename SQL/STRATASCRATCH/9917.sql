@@ -1,4 +1,5 @@
-/*https://platform.stratascratch.com/coding-question?id=9917&python=*/
+/*https://platform.stratascratch.com/coding-question?id=9917&python=
+*/
 
 with average as (
 select department,avg(salary) as average
@@ -11,3 +12,5 @@ on e.department = a.department;
 
 select department,first_name,salary,avg(salary) over(partition by department)
 from employee;
+
+
