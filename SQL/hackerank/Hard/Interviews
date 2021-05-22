@@ -1,0 +1,42 @@
+/*SELECT A.CONTEST_ID, A.HACKER_ID, A.NAME, 
+        SUM(TOTAL_SUBMISSIONS) AS TOTAL_SUBMISSIONS, 
+        SUM(TOTAL_ACCEPTED_SUBMISSIONS) AS TOTAL_ACCEPTED_SUBMISSIONS,
+        SUM(TOTAL_VIEWS) AS TOTAL_VIEWS,
+        SUM(TOTAL_UNIQUE_VIEWS) AS TOTAL_UNIQUE_VIEWS
+FROM CONTESTS AS A
+LEFT JOIN COLLEGES AS B
+    ON A.CONTEST_ID = B.CONTEST_ID
+LEFT JOIN CHALLENGES AS C
+    ON B.COLLEGE_ID = C.COLLEGE_ID 
+LEFT JOIN (SELECT CHALLENGE_ID, SUM(TOTAL_VIEWS) AS TOTAL_VIEWS, 
+                  SUM(TOTAL_UNIQUE_VIEWS) AS TOTAL_UNIQUE_VIEWS
+           FROM VIEW_STATS
+           GROUP BY CHALLENGE_ID) AS D 
+    ON C.CHALLENGE_ID = D.CHALLENGE_ID 
+LEFT JOIN (SELECT CHALLENGE_ID, SUM(TOTAL_SUBMISSIONS) AS TOTAL_SUBMISSIONS, 
+                  SUM(TOTAL_ACCEPTED_SUBMISSIONS) AS TOTAL_ACCEPTED_SUBMISSIONS
+           FROM SUBMISSION_STATS
+           GROUP BY CHALLENGE_ID) AS E
+    ON C.CHALLENGE_ID = E.CHALLENGE_ID
+GROUP BY A.CONTEST_ID, A.HACKER_ID, A.NAME
+HAVING (TOTAL_SUBMISSIONS + TOTAL_ACCEPTED_SUBMISSIONS + TOTAL_VIEWS + TOTAL_UNIQUE_VIEWS) > 0 
+ORDER BY A.CONTEST_ID;*/
+
+select  con.contest_id,con.hacker_id,con.name,sum(s.ts),
+sum(s.tas),sum(v.tv),sum(v.tuv)
+from contests as con
+inner join colleges as col
+on con.contest_id = col.contest_id
+left join challenges as chal
+on col.college_id = chal.college_id
+left join (select challenge_id,sum(total_views) as tv,sum(total_unique_views) as tuv
+            from view_stats 
+            group by challenge_id) as v
+on chal.challenge_id = v.challenge_id
+left join(select challenge_id,sum(total_submissions) as ts,sum(total_accepted_submissions)as tas
+            from submission_stats 
+            group by challenge_id) as s
+on chal.challenge_id = s.challenge_id
+group by con.contest_id,con.hacker_id,con.name
+having (sum(ts)+sum(tas)+sum(tv) +sum(tuv)) > 0
+order by con.contest_id;
