@@ -1,0 +1,8 @@
+select id,age,m.cn,m.power
+from
+(select code,power,min(coins_needed) cn
+ from wands group by code,power) m
+ join wands w on m.code=w.code and m.power = w.power and m.cn=w.coins_needed
+ join wands_property p on m.code=p.code
+ where p.is_evil=0
+ order by m.power desc,age desc
